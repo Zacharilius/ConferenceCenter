@@ -1,6 +1,9 @@
 package com.google.devrel.training.conference.spi;
 
 import static com.google.devrel.training.conference.service.OfyService.ofy;
+
+import java.util.List;
+
 import static com.google.devrel.training.conference.service.OfyService.factory;
 
 import com.google.api.server.spi.config.Api;
@@ -15,6 +18,7 @@ import com.google.devrel.training.conference.form.ConferenceForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.cmd.Query;
 
 /**
  * Defines conference APIs.
@@ -193,4 +197,40 @@ public class ConferenceApi {
 
          return conference;
          }
+    /**
+     * Queries the datastore for conferences.
+     *
+     * @return A list of conference objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    @ApiMethod(
+            name = "queryConferences",
+            path = "queryConferences",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Conference> queryConference(){
+    	Query<Conference> query = ofy().load().type(Conference.class).order("name");
+    	return query.list();
+    }
+    /**
+     * Queries the datastore for conferences the user created
+     *
+     * @return A list of conference objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    @ApiMethod(
+            name = "getConferencesCreated",
+            path = "getConferencesCreated",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Conference> getConferencesCreated(final User user)throws UnauthorizedException {
+    	if (user == null) {
+    		throw new UnauthorizedException("Authorization required");
+    	}
+    	String userId = user.getUserId();
+        Key key = Key.create(Profile.class, userId);
+        
+        Query<Conference> query = ofy().load().type(Conference.class).ancestor(key).order("name");
+    	return query.list();
+    }
 }
