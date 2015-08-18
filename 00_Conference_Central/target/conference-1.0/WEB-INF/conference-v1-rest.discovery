@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ehLSRouoSfPBoesNnGdOkj495u4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/s9FdiOxnwOidbZ8aciiKEs1kmqU\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -285,6 +285,23 @@
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
+  }
+ },
+ "resources": {
+  "conferenceApi": {
+   "methods": {
+    "getConferencesPlayground": {
+     "id": "conference.conferenceApi.getConferencesPlayground",
+     "path": "conferencecollection",
+     "httpMethod": "GET",
+     "response": {
+      "$ref": "ConferenceCollection"
+     },
+     "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email"
+     ]
+    }
+   }
   }
  }
 }

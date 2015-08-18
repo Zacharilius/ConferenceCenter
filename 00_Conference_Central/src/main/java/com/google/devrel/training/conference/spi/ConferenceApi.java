@@ -233,4 +233,12 @@ public class ConferenceApi {
         Query<Conference> query = ofy().load().type(Conference.class).ancestor(key).order("name");
     	return query.list();
     }
+    
+    public List<Conference> getConferencesPlayground()throws UnauthorizedException {
+    	Query<Conference> query = ofy().load().type(Conference.class).order("name");
+    	query = query.filter("city = ", "London");
+    	query = query.filter("topics =", "Medical Innovations");
+    	query = query.filter("month =", 6);
+    	return query.list();
+    }
 }
