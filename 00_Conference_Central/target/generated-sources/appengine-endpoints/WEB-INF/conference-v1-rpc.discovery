@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/s9FdiOxnwOidbZ8aciiKEs1kmqU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/_Ekz-Gjg3AKLfmmLmJseH1FO7oU\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -165,6 +165,69 @@
     }
    }
   },
+  "ConferenceQueryForm": {
+   "id": "ConferenceQueryForm",
+   "type": "object",
+   "properties": {
+    "filters": {
+     "type": "array",
+     "items": {
+      "$ref": "Filter"
+     }
+    }
+   }
+  },
+  "Field": {
+   "id": "Field",
+   "type": "string",
+   "enum": [
+    "CITY",
+    "MAX_ATTENDEES",
+    "MONTH",
+    "TOPIC"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
+  "Filter": {
+   "id": "Filter",
+   "type": "object",
+   "properties": {
+    "field": {
+     "$ref": "Field"
+    },
+    "operator": {
+     "$ref": "Operator"
+    },
+    "value": {
+     "type": "string"
+    }
+   }
+  },
+  "Operator": {
+   "id": "Operator",
+   "type": "string",
+   "enum": [
+    "EQ",
+    "GT",
+    "GTEQ",
+    "LT",
+    "LTEQ",
+    "NE"
+   ],
+   "enumDescriptions": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
   "Profile": {
    "id": "Profile",
    "type": "object",
@@ -269,6 +332,14 @@
   },
   "conference.queryConferences": {
    "id": "conference.queryConferences",
+   "parameters": {
+    "resource": {
+     "$ref": "ConferenceQueryForm"
+    }
+   },
+   "parameterOrder": [
+    "resource"
+   ],
    "returns": {
     "$ref": "ConferenceCollection"
    },

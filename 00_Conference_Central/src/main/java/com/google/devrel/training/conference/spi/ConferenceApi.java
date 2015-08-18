@@ -2,6 +2,7 @@ package com.google.devrel.training.conference.spi;
 
 import static com.google.devrel.training.conference.service.OfyService.ofy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.devrel.training.conference.service.OfyService.factory;
@@ -15,6 +16,7 @@ import com.google.devrel.training.conference.Constants;
 import com.google.devrel.training.conference.domain.Conference;
 import com.google.devrel.training.conference.domain.Profile;
 import com.google.devrel.training.conference.form.ConferenceForm;
+import com.google.devrel.training.conference.form.ConferenceQueryForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.Key;
@@ -208,9 +210,18 @@ public class ConferenceApi {
             path = "queryConferences",
             httpMethod = HttpMethod.POST
     )
-    public List<Conference> queryConference(){
-    	Query<Conference> query = ofy().load().type(Conference.class).order("name");
-    	return query.list();
+    public List<Conference> queryConference(ConferenceQueryForm conferenceQueryForm){
+    	Iterable<Conference> conferenceIterable = conferenceQueryForm.getQuery().list();
+    	List<Conference> result = new ArrayList<>(0);
+    	List<Key<Profile>> organizersKeyList = new ArrayList<>(0);
+    	for(Conference conference : conferenceIterable){
+    		organizersKeyList.add(Key.create(Profile.class, conference.getOrganizerDisplayName()));
+    		result.add(conference);
+    	}
+    	// To avoid separate datastore gets for each Conference, pre-fetch the Profiles
+    	ofy().load().keys(organizersKeyList);
+    	return result;
+    
     }
     /**
      * Queries the datastore for conferences the user created
@@ -234,11 +245,14 @@ public class ConferenceApi {
     	return query.list();
     }
     
+    
+    
     public List<Conference> getConferencesPlayground()throws UnauthorizedException {
-    	Query<Conference> query = ofy().load().type(Conference.class).order("name");
+    	Query<Conference> query = ofy().load().type(Conference.class).order("maxAttendees");
     	query = query.filter("city = ", "London");
     	query = query.filter("topics =", "Medical Innovations");
     	query = query.filter("month =", 6);
+    	query = query.filter("maxAttendees > ", 10).order("name");
     	return query.list();
     }
 }
