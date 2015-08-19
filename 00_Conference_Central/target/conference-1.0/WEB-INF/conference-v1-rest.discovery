@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/_Ekz-Gjg3AKLfmmLmJseH1FO7oU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/36zzu9wT3ZeKTVXvtD8dEBDute8\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -234,6 +234,12 @@
    "id": "Profile",
    "type": "object",
    "properties": {
+    "conferenceKeysToAttend": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
     "displayName": {
      "type": "string"
     },
@@ -283,6 +289,18 @@
     "",
     ""
    ]
+  },
+  "WrappedBoolean": {
+   "id": "WrappedBoolean",
+   "type": "object",
+   "properties": {
+    "reason": {
+     "type": "string"
+    },
+    "result": {
+     "type": "boolean"
+    }
+   }
   }
  },
  "methods": {
@@ -301,10 +319,42 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getConference": {
+   "id": "conference.getConference",
+   "path": "conference/{websafeConferenceKey}",
+   "httpMethod": "GET",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "response": {
+    "$ref": "Conference"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getConferencesCreated": {
    "id": "conference.getConferencesCreated",
    "path": "getConferencesCreated",
    "httpMethod": "POST",
+   "response": {
+    "$ref": "ConferenceCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getConferencesToAttend": {
+   "id": "conference.getConferencesToAttend",
+   "path": "getConferencesToAttend",
+   "httpMethod": "GET",
    "response": {
     "$ref": "ConferenceCollection"
    },
@@ -338,6 +388,27 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "registerForConference": {
+   "id": "conference.registerForConference",
+   "path": "conference/{websafeConferenceKey}/registration",
+   "httpMethod": "POST",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "response": {
+    "$ref": "WrappedBoolean"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "saveProfile": {
    "id": "conference.saveProfile",
    "path": "profile",
@@ -348,6 +419,27 @@
    },
    "response": {
     "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "unregisterFromConference": {
+   "id": "conference.unregisterFromConference",
+   "path": "conference/websafeConferenceKey/registration",
+   "httpMethod": "DELETE",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "response": {
+    "$ref": "WrappedBoolean"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
