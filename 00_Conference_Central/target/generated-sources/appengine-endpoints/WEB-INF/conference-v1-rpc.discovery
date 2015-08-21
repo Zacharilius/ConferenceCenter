@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Q5hYn1tUjA9ui-QkR5WDyRsW9OY\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/1OpcqFgxMqsgfdxfAX3otVjFCKo\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -273,6 +273,73 @@
     }
    }
   },
+  "Session": {
+   "id": "Session",
+   "type": "object",
+   "properties": {
+    "date": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "duration": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "highlights": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "name": {
+     "type": "string"
+    },
+    "startTime": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "typeOfSession": {
+     "type": "string"
+    }
+   }
+  },
+  "SessionForm": {
+   "id": "SessionForm",
+   "type": "object",
+   "properties": {
+    "date": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "duration": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "highlights": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "name": {
+     "type": "string"
+    },
+    "speaker": {
+     "type": "string"
+    },
+    "startTime": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "typeOfSession": {
+     "type": "string"
+    }
+   }
+  },
   "TeeShirtSize": {
    "id": "TeeShirtSize",
    "type": "string",
@@ -333,6 +400,28 @@
    ],
    "returns": {
     "$ref": "Conference"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "conference.createSession": {
+   "id": "conference.createSession",
+   "parameters": {
+    "resource": {
+     "$ref": "SessionForm"
+    },
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "resource",
+    "websafeConferenceKey"
+   ],
+   "returns": {
+    "$ref": "Session"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

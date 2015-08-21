@@ -5,6 +5,7 @@ import static com.google.devrel.training.conference.service.OfyService.ofy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.devrel.training.conference.service.OfyService.factory;
 
@@ -26,10 +27,12 @@ import com.google.devrel.training.conference.Constants;
 import com.google.devrel.training.conference.domain.Announcement;
 import com.google.devrel.training.conference.domain.Conference;
 import com.google.devrel.training.conference.domain.Profile;
+import com.google.devrel.training.conference.domain.Session;
 import com.google.devrel.training.conference.form.ConferenceForm;
 import com.google.devrel.training.conference.form.ConferenceQueryForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
+import com.google.devrel.training.conference.form.SessionForm;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
@@ -557,4 +560,61 @@ public class ConferenceApi {
     	}
     	return null;
     }
+    
+    
+    /**
+     * Creates a new Conference object and stores it to the datastore.
+     *
+     * @param user A user who invokes this method, null when the user is not signed in.
+     * @param conferenceForm A ConferenceForm object representing user's inputs.
+     * @return A newly created Conference Object.
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    @ApiMethod(
+    		name = "createSession", 
+    		path = "conference/{websafeConferenceKey}/session", 
+    		httpMethod = HttpMethod.POST
+    )
+    public Session createSession(final User user, @Named("websafeConferenceKey") final String websafeConferenceKey, final SessionForm sessionForm)
+        throws UnauthorizedException {
+    	// Check if the user is logged in. 
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+        
+        // Commented because unnecessary
+        // final String conferenceId = user.getUserId();
+        
+        // Get the conferenceKey. 
+        Key<Conference> conferenceKey = Key.create(Conference.class, websafeConferenceKey);
+        
+        // Create a sessionKey
+        final Key<Session> sessionKey = factory().allocateId(conferenceKey, Session.class);
+        
+        // Get the id from the sessionKey
+        final long sessionId = sessionKey.getId();
+        
+        // Create a queue object by fetching the default Push Queue
+        //final Queue queue = QueueFactory.getDefaultQueue();
+        
+        // Start transactions
+        Session session = ofy().transact(new Work<Session>(){
+        	@Override
+        	public Session run(){
+        		// Profile profile = getProfileFromUser(user);
+        		// Load the corresponding conference object from datastore
+        		Key<Conference> conferenceKey = Key.create(websafeConferenceKey);
+                Conference conference = ofy().load().key(conferenceKey).now();
+                String conferenceId = Objects.toString(conference.getId());
+                
+        		//Conference conference = new Conference(conferenceId, userId, conferenceForm);
+        		Session session = new Session(sessionId, conferenceId, sessionForm);
+                ofy().save().entities(conference, session).now();
+
+                return session;
+        	}
+        }); 
+        return session;
+    }
+ 
 }
