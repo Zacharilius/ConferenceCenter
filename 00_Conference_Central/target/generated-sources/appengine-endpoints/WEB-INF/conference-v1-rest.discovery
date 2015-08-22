@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/1OpcqFgxMqsgfdxfAX3otVjFCKo\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/b2KZsTUAofZOH-PLs7BNuRcBCuM\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -309,6 +309,18 @@
     }
    }
   },
+  "SessionCollection": {
+   "id": "SessionCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "Session"
+     }
+    }
+   }
+  },
   "SessionForm": {
    "id": "SessionForm",
    "type": "object",
@@ -480,6 +492,27 @@
    "httpMethod": "GET",
    "response": {
     "$ref": "Profile"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getSessionsCreated": {
+   "id": "conference.getSessionsCreated",
+   "path": "conference/{websafeConferenceKey}/getSessionsCreated",
+   "httpMethod": "POST",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "response": {
+    "$ref": "SessionCollection"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

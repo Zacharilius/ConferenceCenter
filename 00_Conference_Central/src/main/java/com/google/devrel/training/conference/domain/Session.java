@@ -2,6 +2,7 @@ package com.google.devrel.training.conference.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
@@ -41,6 +42,7 @@ public class Session {
     
     
     // The name of the session.
+    @Index
     private String name;
     
     // The session highlights
@@ -64,11 +66,12 @@ public class Session {
 	
 	public Session(){}
 	
-	public Session(final long id, final String sessionConferenceId, 
+	public Session(final long id, final String sessionConferenceKey, 
 			final SessionForm sessionForm){
 		Preconditions.checkNotNull(sessionForm.getName(), "Session name required");
 		this.id = id;
-		this.sessionConferenceId = sessionConferenceId;
+		this.conferenceKey = Key.create(sessionConferenceKey);
+		this.sessionConferenceId = Objects.toString(conferenceKey.getId());
 		updateWithSessionForm(sessionForm);
 		
 	}

@@ -246,7 +246,7 @@ public class ConferenceApi {
     	String userId = user.getUserId();
         Key key = Key.create(Profile.class, userId);
         
-        Query<Conference> query = ofy().load().type(Conference.class).ancestor(key).order("name");
+        Query<Conference> query = ofy().load().type(Conference.class).ancestor(key);//.order("name");
     	return query.list();
     }
     
@@ -607,8 +607,12 @@ public class ConferenceApi {
                 Conference conference = ofy().load().key(conferenceKey).now();
                 String conferenceId = Objects.toString(conference.getId());
                 
-        		//Conference conference = new Conference(conferenceId, userId, conferenceForm);
-        		Session session = new Session(sessionId, conferenceId, sessionForm);
+                System.out.println("conferenceId: " + conferenceId);
+                System.out.println("conferenceId: " + conferenceKey.getId());
+                System.out.println("conferenceKey: " + conferenceKey.toString());
+                System.out.println("conference.getName(): " + conference.getName());
+
+                Session session = new Session(sessionId, websafeConferenceKey, sessionForm);
                 ofy().save().entities(conference, session).now();
 
                 return session;
@@ -616,5 +620,29 @@ public class ConferenceApi {
         }); 
         return session;
     }
- 
+    /**
+     * Queries the datastore for conferences the user created
+     *
+     * @return A list of conference objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    @ApiMethod(
+            name = "getSessionsCreated",
+            path = "conference/{websafeConferenceKey}/getSessionsCreated",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Session> getSessionsCreated(final User user, @Named("websafeConferenceKey") 
+    		final String websafeConferenceKey)throws UnauthorizedException {
+    	if (user == null) {
+    		throw new UnauthorizedException("Authorization required");
+    	}
+        Key<Conference> key = Key.create(websafeConferenceKey);
+        System.out.println("key: " + key.getString());
+        Conference c = ofy().load().key(key).now();
+        System.out.println("c: " + c.getName());
+        //Query<Conference> query = ofy().load().type(Conference.class).ancestor(key).order("name");
+
+        Query<Session> query = ofy().load().type(Session.class).ancestor(key).order("name");
+    	return query.list();
+    } 
 }
