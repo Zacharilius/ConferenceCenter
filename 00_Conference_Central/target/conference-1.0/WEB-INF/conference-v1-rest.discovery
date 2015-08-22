@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/b2KZsTUAofZOH-PLs7BNuRcBCuM\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Y9hA9Ki5b1P1rZusUC-aW-n0Lo0\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -298,6 +298,9 @@
      "format": "int64"
     },
     "name": {
+     "type": "string"
+    },
+    "speaker": {
      "type": "string"
     },
     "startTime": {

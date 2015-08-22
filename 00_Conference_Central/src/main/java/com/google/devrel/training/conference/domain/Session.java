@@ -37,9 +37,7 @@ public class Session {
     @Parent
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     private Key<Conference> conferenceKey;
-    
-    
-    
+
     
     // The name of the session.
     @Index
@@ -154,5 +152,11 @@ public class Session {
 	 */
 	public Key<Conference> getConferenceKey() {
 		return conferenceKey;
+	}
+	/**
+	 * @return The speaker name
+	 */
+	public String getSpeaker(){
+		return speaker;
 	}
 }
