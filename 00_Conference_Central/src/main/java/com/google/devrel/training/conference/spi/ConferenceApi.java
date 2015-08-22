@@ -215,7 +215,7 @@ public class ConferenceApi {
             path = "queryConferences",
             httpMethod = HttpMethod.POST
     )
-    public List<Conference> queryConference(ConferenceQueryForm conferenceQueryForm){
+    public List<Conference> queryConferences(ConferenceQueryForm conferenceQueryForm){
     	Iterable<Conference> conferenceIterable = conferenceQueryForm.getQuery().list();
     	List<Conference> result = new ArrayList<>(0);
     	List<Key<Profile>> organizersKeyList = new ArrayList<>(0);
