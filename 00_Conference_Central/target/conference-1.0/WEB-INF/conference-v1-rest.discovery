@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/f89lvFr6WN2yXxS6haaFJtYwZVk\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/2RP_7l7QQt2yBtLd5qCc96_X7iw\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -255,6 +255,12 @@
     "mainEmail": {
      "type": "string"
     },
+    "sessionWishlist": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
     "teeShirtSize": {
      "$ref": "TeeShirtSize"
     },
@@ -407,6 +413,27 @@
   }
  },
  "methods": {
+  "addSessionToWishlist": {
+   "id": "conference.addSessionToWishlist",
+   "path": "conference/getSessionsCreated/{websafeSessionKey}/addSessionToWishlist",
+   "httpMethod": "POST",
+   "parameters": {
+    "websafeSessionKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeSessionKey"
+   ],
+   "response": {
+    "$ref": "WrappedBoolean"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "createConference": {
    "id": "conference.createConference",
    "path": "conference",
@@ -599,6 +626,27 @@
     "$ref": "SessionQueryForm",
     "parameterName": "resource"
    },
+   "response": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getSessionsInWishlist": {
+   "id": "conference.getSessionsInWishlist",
+   "path": "conference/{websafeConferenceKey}/getSessionsInWishlist",
+   "httpMethod": "GET",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
    "response": {
     "$ref": "SessionCollection"
    },

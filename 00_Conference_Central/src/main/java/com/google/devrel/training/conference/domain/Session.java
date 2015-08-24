@@ -29,7 +29,7 @@ public class Session {
 	// Id assigned through app engine
 	@Id private long id;
 
-    // The userId of the session speaker.
+    // The username of the session speaker.
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     private String sessionConferenceId;
     

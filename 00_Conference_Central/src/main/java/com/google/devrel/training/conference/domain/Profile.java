@@ -20,6 +20,7 @@ public class Profile {
     
     private List<String> conferenceKeysToAttend = new ArrayList<>(0);
 
+    private List<String> sessionKeysWishlist = new ArrayList<>(0);
     // TODO indicate that the userId is to be used in the Entity's key
     @Id String userId;
     
@@ -40,8 +41,15 @@ public class Profile {
     public List<String> getConferenceKeysToAttend(){
     	return ImmutableList.copyOf(conferenceKeysToAttend);
     }
+
     public void addToConferenceKeysToAttend(String conferenceKey){
     	conferenceKeysToAttend.add(conferenceKey);
+    }
+    public List<String> getSessionWishlist(){
+    	return ImmutableList.copyOf(sessionKeysWishlist);
+    }
+    public void addSessionWishLislist(String sessionKey){
+    	sessionKeysWishlist.add(sessionKey);
     }
     public void unregisterFromConference(String conferenceKey){
     	if(conferenceKeysToAttend.contains(conferenceKey)){

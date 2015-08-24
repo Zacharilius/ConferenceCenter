@@ -711,4 +711,163 @@ public class ConferenceApi {
     	return result;
     } 
     
+/**
+ * Add a session to a user's personal wishlist
+ *
+ * @param user An user who invokes this method, null when the user is not signed in.
+ * @param websafeSessionKey The String representation of the Session Key.
+ * @return Boolean true when success, otherwise false
+ * @throws UnauthorizedException when the user is not signed in.
+ * @throws NotFoundException when there is no Conference with the given conferenceId.
+ */
+@ApiMethod(
+        name = "addSessionToWishlist",
+        path = "conference/getSessionsCreated/{websafeSessionKey}/addSessionToWishlist",
+        httpMethod = HttpMethod.POST
+
+)
+
+public WrappedBoolean addSessionToWishlist(final User user,
+        @Named("websafeSessionKey") final String websafeSessionKey)
+        throws UnauthorizedException, NotFoundException,
+        ForbiddenException, ConflictException {
+    // If not signed in, throw a 401 error.
+    if (user == null) {
+        throw new UnauthorizedException("Authorization required");
+    }
+
+    // Get the userId
+    final String userId = user.getUserId();
+
+    // TODO
+    // Start transaction
+    WrappedBoolean result = ofy().transact(new Work<WrappedBoolean>() {
+        @Override
+        public WrappedBoolean run() {
+            try {
+
+            // TODO
+            // Get the conference key -- you can get it from websafeSessionKey
+            // Will throw ForbiddenException if the key cannot be created
+            Key<Session> sessionKey = Key.create(websafeSessionKey);
+
+            // TODO
+            // Get the Conference entity from the datastore
+            Session session = ofy().load().key(sessionKey).now();
+
+            // 404 when there is no Conference with the given conferenceId.
+            if (session == null) {
+                return new WrappedBoolean (false,
+                        "No Conference found with key: "
+                                + websafeSessionKey);
+            }
+
+            // TODO
+            // Get the user's Profile entity
+            Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
+
+            // Has the user already registered to attend this conference?
+            if (profile.getSessionWishlist().contains(
+                    websafeSessionKey)) {
+                return new WrappedBoolean (false, "Already added");
+            } else {
+                // All looks good, go ahead and book the seat
+                
+                // TODO
+                // Add the websafeSessionKey to the profile's
+                // conferencesToAttend property
+                profile.addSessionWishLislist(websafeSessionKey);
+                
+
+                // TODO
+                // Save the Conference and Profile entities
+                ofy().save().entities(session, profile);
+                // We are booked!
+                return new WrappedBoolean(true, "Session added to wishlist");
+            }
+
+            }
+            catch (Exception e) {
+                return new WrappedBoolean(false, "Unknown exception");
+            }
+        }
+    });
+    // if result is false
+    if (!result.getResult()) {
+        if (result.getReason().contains("No Session found with key")) {
+            throw new NotFoundException (result.getReason());
+        }
+        else if (result.getReason() == "Already added") {
+            throw new ConflictException("You have already added the session");
+        }
+        else {
+            throw new ForbiddenException("Unknown exception");
+        }
+    }
+    return result;
+}
+/**
+ * Returns a collection of Sessions Object of all sessions that the user is attending in a given conference
+ *
+ * @param user An user who invokes this method, null when the user is not signed in.
+ * @return a Collection of Conferences that the user is going to attend.
+ * @throws UnauthorizedException when the User object is null.
+ */
+@ApiMethod(
+        name = "getSessionsInWishlist",
+        path = "conference/{websafeConferenceKey}/getSessionsInWishlist",
+        httpMethod = HttpMethod.GET
+)
+public Collection<Session> getSessionsInWishlist(final User user, @Named("websafeConferenceKey") final String websafeConferenceKey)
+        throws UnauthorizedException, NotFoundException {
+    // If not signed in, throw a 401 error.
+    if (user == null) {
+        throw new UnauthorizedException("Authorization required");
+    }
+    // TODO
+    // Get the Profile entity for the user
+    Profile profile = ofy().load().key(Key.create(Profile.class, user.getUserId())).now(); // Change this;
+    if (profile == null) {
+        throw new NotFoundException("Profile doesn't exist.");
+    }
+
+    // TODO
+    // Get the value of the profile's sessionWishlist property
+    List<String> keyStringsWishlist = profile.getSessionWishlist();
+
+    // TODO
+    // Iterate over keyStringsToAttend,
+    // and return a Collection of the
+    // Conference entities that the user has registered to attend
+	List<Key<Session>> sessionKeyList = new ArrayList<>(0);
+	for(String keyString : keyStringsWishlist){
+		Key<Session> sessionKey = Key.<Session>create(keyString);
+		Session session = ofy().load().key(sessionKey).now();
+		String sessionConferenceKey = session.getConferenceKey().getString();
+		if(sessionConferenceKey.equals(websafeConferenceKey)){
+			sessionKeyList.add(sessionKey);
+		}
+	}
+    return ofy().load().keys(sessionKeyList).values();
+}
+/**
+ * Queries the datastore for the featured speaker
+ *
+ * @return A list of session objects
+ * @throws UnauthorizedException when the user is not signed in.
+ */
+
+@ApiMethod(
+        name = "getFeaturedSpeaker",
+        path = "conference/getFeaturedSpeaker",
+        httpMethod = HttpMethod.GET
+)
+public List<Session> getFeaturedSpeaker() {
+    Query<Session> query = ofy().load().type(Session.class);
+    query = query.filter("speaker =", "Featured Speaker");
+    
+    return query.list();
+
+}
+
 }
