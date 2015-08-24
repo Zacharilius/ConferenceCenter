@@ -47,12 +47,14 @@ public class Session {
     private List<String> highlights;
 
     // The name of the session's speaker
+    @Index
     private String speaker;
     
     // The duration in hours of the session
     private int duration;
     
     // The type of session
+    @Index
     private String typeOfSession;
     
     // The date the session occurs

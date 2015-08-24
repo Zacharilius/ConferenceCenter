@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Y9hA9Ki5b1P1rZusUC-aW-n0Lo0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/f89lvFr6WN2yXxS6haaFJtYwZVk\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -355,6 +355,18 @@
     }
    }
   },
+  "SessionQueryForm": {
+   "id": "SessionQueryForm",
+   "type": "object",
+   "properties": {
+    "filters": {
+     "type": "array",
+     "items": {
+      "$ref": "Filter"
+     }
+    }
+   }
+  },
   "TeeShirtSize": {
    "id": "TeeShirtSize",
    "type": "string",
@@ -509,6 +521,69 @@
     }
    },
    "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "returns": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "conference.getSessionsCreatedBySpeaker": {
+   "id": "conference.getSessionsCreatedBySpeaker",
+   "parameters": {
+    "speaker": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "speaker"
+   ],
+   "returns": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "conference.getSessionsCreatedByType": {
+   "id": "conference.getSessionsCreatedByType",
+   "parameters": {
+    "sessionType": {
+     "type": "string",
+     "required": true
+    },
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey",
+    "sessionType"
+   ],
+   "returns": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "conference.getSessionsCreatedQuery": {
+   "id": "conference.getSessionsCreatedQuery",
+   "parameters": {
+    "resource": {
+     "$ref": "SessionQueryForm"
+    },
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "resource",
     "websafeConferenceKey"
    ],
    "returns": {

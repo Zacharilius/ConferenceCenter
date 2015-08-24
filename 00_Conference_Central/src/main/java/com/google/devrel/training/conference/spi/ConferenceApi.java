@@ -33,6 +33,7 @@ import com.google.devrel.training.conference.form.ConferenceQueryForm;
 import com.google.devrel.training.conference.form.ProfileForm;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.google.devrel.training.conference.form.SessionForm;
+import com.google.devrel.training.conference.form.SessionQueryForm;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
@@ -621,9 +622,9 @@ public class ConferenceApi {
         return session;
     }
     /**
-     * Queries the datastore for conferences the user created
+     * Queries the datastore for sessions given a conference
      *
-     * @return A list of conference objects
+     * @return A list of session objects
      * @throws UnauthorizedException when the user is not signed in.
      */
     @ApiMethod(
@@ -631,11 +632,9 @@ public class ConferenceApi {
             path = "conference/{websafeConferenceKey}/getSessionsCreated",
             httpMethod = HttpMethod.POST
     )
-    public List<Session> getSessionsCreated(final User user, @Named("websafeConferenceKey") 
-    		final String websafeConferenceKey)throws UnauthorizedException {
-    	if (user == null) {
-    		throw new UnauthorizedException("Authorization required");
-    	}
+    public List<Session> getSessionsCreated(@Named("websafeConferenceKey") 
+    		final String websafeConferenceKey) {
+
         Key<Conference> key = Key.create(websafeConferenceKey);
         System.out.println("key: " + key.getString());
         Conference c = ofy().load().key(key).now();
@@ -644,5 +643,72 @@ public class ConferenceApi {
 
         Query<Session> query = ofy().load().type(Session.class).ancestor(key).order("name");
     	return query.list();
+    }
+    /**
+     * Queries the datastore for sessions given a conference and given the sessionType param
+     *
+     * @return A list of session objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    
+    @ApiMethod(
+            name = "getSessionsCreatedByType",
+            path = "conference/{websafeConferenceKey}/getSessionsCreatedByType",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Session> getConferenceSessionsByType(@Named("websafeConferenceKey") 
+    		final String websafeConferenceKey, @Named("sessionType") String sessionType) {
+        Key<Conference> key = Key.create(websafeConferenceKey);
+        Query<Session> query = ofy().load().type(Session.class).ancestor(key).order("name");
+        query = query.filter("typeOfSession =", sessionType);
+        
+        return query.list();
+
+    }
+    /**
+     * Queries the datastore for sessions given a conference and given the speaker param
+     *
+     * @return A list of session objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    
+    @ApiMethod(
+            name = "getSessionsCreatedBySpeaker",
+            path = "conference/getSessionsCreatedBySpeaker",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Session> getConferenceSessionsBySpeaker(@Named("speaker") String speaker) {
+        Query<Session> query = ofy().load().type(Session.class);
+        query = query.filter("speaker =", speaker);
+        
+        return query.list();
+
+    }
+    /**
+     * Queries the datastore for sessions given a conference and given the sessionType param
+     *
+     * @return A list of session objects
+     * @throws UnauthorizedException when the user is not signed in.
+     */
+    @ApiMethod(
+            name = "getSessionsCreatedQuery",
+            path = "conference/{websafeConferenceKey}/getSessionsCreatedQuery",
+            httpMethod = HttpMethod.POST
+    )
+    public List<Session> getSessionsCreatedQuery(@Named("websafeConferenceKey") 
+    		final String websafeConferenceKey, SessionQueryForm sessionQueryForm) {
+
+    	Iterable<Session> sessionIterable = sessionQueryForm.getQuery().list();
+    	List<Session> result = new ArrayList<>(0);
+    	List<Key<Conference>> conferencesKeyList = new ArrayList<>(0);
+    	for(Session session : sessionIterable){
+    		Key<Conference> key = Key.create(websafeConferenceKey);
+    		conferencesKeyList.add(key);
+    		result.add(session);
+    	}
+    	// To avoid separate datastore gets for each Conference, pre-fetch the Profiles
+    	ofy().load().keys(conferencesKeyList);
+    	return result;
     } 
+    
 }

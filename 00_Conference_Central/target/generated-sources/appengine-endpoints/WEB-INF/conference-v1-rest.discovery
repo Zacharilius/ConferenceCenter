@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Y9hA9Ki5b1P1rZusUC-aW-n0Lo0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/f89lvFr6WN2yXxS6haaFJtYwZVk\"",
  "discoveryVersion": "v1",
  "id": "conference:v1",
  "name": "conference",
@@ -357,6 +357,18 @@
     }
    }
   },
+  "SessionQueryForm": {
+   "id": "SessionQueryForm",
+   "type": "object",
+   "properties": {
+    "filters": {
+     "type": "array",
+     "items": {
+      "$ref": "Filter"
+     }
+    }
+   }
+  },
   "TeeShirtSize": {
    "id": "TeeShirtSize",
    "type": "string",
@@ -514,6 +526,79 @@
    "parameterOrder": [
     "websafeConferenceKey"
    ],
+   "response": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getSessionsCreatedBySpeaker": {
+   "id": "conference.getSessionsCreatedBySpeaker",
+   "path": "conference/getSessionsCreatedBySpeaker",
+   "httpMethod": "POST",
+   "parameters": {
+    "speaker": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "speaker"
+   ],
+   "response": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getSessionsCreatedByType": {
+   "id": "conference.getSessionsCreatedByType",
+   "path": "conference/{websafeConferenceKey}/getSessionsCreatedByType",
+   "httpMethod": "POST",
+   "parameters": {
+    "sessionType": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey",
+    "sessionType"
+   ],
+   "response": {
+    "$ref": "SessionCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getSessionsCreatedQuery": {
+   "id": "conference.getSessionsCreatedQuery",
+   "path": "conference/{websafeConferenceKey}/getSessionsCreatedQuery",
+   "httpMethod": "POST",
+   "parameters": {
+    "websafeConferenceKey": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "websafeConferenceKey"
+   ],
+   "request": {
+    "$ref": "SessionQueryForm",
+    "parameterName": "resource"
+   },
    "response": {
     "$ref": "SessionCollection"
    },

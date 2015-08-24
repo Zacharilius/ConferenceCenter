@@ -292,4 +292,5 @@ public class ConferenceApiTest {
                 profile.getConferenceKeysToAttend().contains(conference.getWebsafeKey()));
     }
     
+    
 }
