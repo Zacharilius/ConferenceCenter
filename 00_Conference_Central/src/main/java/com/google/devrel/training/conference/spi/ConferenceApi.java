@@ -596,7 +596,7 @@ public class ConferenceApi {
         final long sessionId = sessionKey.getId();
         
         // Create a queue object by fetching the default Push Queue
-        //final Queue queue = QueueFactory.getDefaultQueue();
+        final Queue queue = QueueFactory.getDefaultQueue();
         
         // Start transactions
         Session session = ofy().transact(new Work<Session>(){
@@ -606,16 +606,16 @@ public class ConferenceApi {
         		// Load the corresponding conference object from datastore
         		Key<Conference> conferenceKey = Key.create(websafeConferenceKey);
                 Conference conference = ofy().load().key(conferenceKey).now();
-                String conferenceId = Objects.toString(conference.getId());
                 
-                System.out.println("conferenceId: " + conferenceId);
-                System.out.println("conferenceId: " + conferenceKey.getId());
-                System.out.println("conferenceKey: " + conferenceKey.toString());
-                System.out.println("conference.getName(): " + conference.getName());
-
                 Session session = new Session(sessionId, websafeConferenceKey, sessionForm);
                 ofy().save().entities(conference, session).now();
 
+                queue.add(ofy().getTransaction(),
+	                TaskOptions.Builder.withUrl("/tasks/add_speaker_memcache")
+	                	.param("conferenceKey",  websafeConferenceKey)
+	                	.param("speakerName", sessionForm.getSpeaker()));
+                
+                
                 return session;
         	}
         }); 
@@ -856,18 +856,17 @@ public Collection<Session> getSessionsInWishlist(final User user, @Named("websaf
  * @return A list of session objects
  * @throws UnauthorizedException when the user is not signed in.
  */
-
 @ApiMethod(
-        name = "getFeaturedSpeaker",
-        path = "conference/getFeaturedSpeaker",
-        httpMethod = HttpMethod.GET
+		name = "getFeaturedSpeaker",
+		path = "conference/getFeaturedSpeaker",
+		httpMethod = HttpMethod.GET
 )
-public List<Session> getFeaturedSpeaker() {
-    Query<Session> query = ofy().load().type(Session.class);
-    query = query.filter("speaker =", "Featured Speaker");
-    
-    return query.list();
-
+public Announcement getFeaturedSpeaker(){
+	MemcacheService memcacheService = MemcacheServiceFactory.getMemcacheService();
+	Object message = memcacheService.get(Constants.MEMCACHE_MORE_THAN_1_SPEAKER_KEY);
+	if(message != null){
+		return new Announcement(message.toString());
+	}
+	return null;
 }
-
 }

@@ -69,6 +69,7 @@ public class Session {
 	public Session(final long id, final String sessionConferenceKey, 
 			final SessionForm sessionForm){
 		Preconditions.checkNotNull(sessionForm.getName(), "Session name required");
+		Preconditions.checkNotNull(sessionForm.getSpeaker(), "Speaker name required");
 		this.id = id;
 		this.conferenceKey = Key.create(sessionConferenceKey);
 		this.sessionConferenceId = Objects.toString(conferenceKey.getId());
@@ -161,4 +162,5 @@ public class Session {
 	public String getSpeaker(){
 		return speaker;
 	}
+	
 }
